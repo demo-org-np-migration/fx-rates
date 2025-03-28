@@ -68,6 +68,13 @@ def save_rates(data):
 
 def main():
     data = fetch_rates()
+
+    if DRY_RUN:
+        print(f"base={data['base']} timestamp={data.get('timestamp')}")
+        for quote, rate in data["rates"].items():
+            print(f"  {data['base']}/{quote} = {rate}")
+        return
+
     save_rates(data)
     print(f"listo, {len(data['rates'])} tasas guardadas")
 
