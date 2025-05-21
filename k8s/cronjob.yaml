@@ -1,0 +1,44 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: fx-rates
+  labels:
+    app.kubernetes.io/name: fx-rates
+    app.kubernetes.io/part-of: cauri
+    cauri.io/team: risk
+spec:
+  schedule: "*/15 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: fx-rates
+            app.kubernetes.io/part-of: cauri
+            cauri.io/team: risk
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: fx-rates
+              image: ghcr.io/demo-org-np-migration/fx-rates:IMAGE_TAG
+              env:
+                - name: ENV
+                  value: "ENV_PLACEHOLDER"
+                - name: DB_HOST
+                  value: "postgres"
+                - name: DB_NAME
+                  value: "rates"
+                - name: DB_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgres-credentials
+                      key: username
+                - name: DB_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgres-credentials
+                      key: password
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 64Mi
