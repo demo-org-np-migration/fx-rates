@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 """
 Pega las tasas de OpenFX y las mete en postgres. Corre como CronJob cada 15 min.
+
+Uso local:
+    DRY_RUN=1 python3 fetch_rates.py
 """
 import os
+import sys
 from datetime import datetime, timezone
 
 import requests
@@ -80,4 +84,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        print(f"error trayendo tasas: {e}", file=sys.stderr)
+        sys.exit(1)
