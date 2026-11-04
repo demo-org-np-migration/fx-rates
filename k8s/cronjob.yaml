@@ -8,8 +8,18 @@ metadata:
     cauri.io/team: risk
 spec:
   schedule: "*/15 * * * *"
+  # Una corrida por vez: si la anterior sigue (o está trabada), la siguiente no arranca y no se apilan Jobs.
+  concurrencyPolicy: Forbid
+  # Si el cron no pudo arrancar a horario (controlador caído, cluster lleno), se saltea en vez de recuperar todas juntas.
+  startingDeadlineSeconds: 300
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
   jobTemplate:
     spec:
+      # Una corrida que no termina en 10 minutos (imagen que no se puede bajar, pod sin lugar) se da por fallida y
+      # el historial la limpia, en vez de quedar ocupando un pod para siempre.
+      activeDeadlineSeconds: 600
+      backoffLimit: 2
       template:
         metadata:
           labels:
