@@ -38,6 +38,8 @@ spec:
                   value: "postgres"
                 - name: DB_NAME
                   value: "rates"
+                - name: test
+                  value: "test"
                 - name: DB_USER
                   valueFrom:
                     secretKeyRef:
