@@ -31,15 +31,15 @@ spec:
           containers:
             - name: fx-rates
               image: ghcr.io/demo-org-np-migration/fx-rates:IMAGE_TAG
+              # La configuración no secreta de cada entorno vive en k8s/config-<entorno>.env. El deploy la aplica como el
+              # ConfigMap fx-rates-config antes que este manifiesto, y cada corrida del CronJob la toma al arrancar.
+              # Una variable escrita acá abajo en `env` le gana a la del ConfigMap: por eso las de configuración van allá.
+              envFrom:
+                - configMapRef:
+                    name: fx-rates-config
               env:
                 - name: ENV
                   value: "ENV_PLACEHOLDER"
-                - name: DB_HOST
-                  value: "postgres"
-                - name: DB_NAME
-                  value: "rates"
-                - name: test
-                  value: "test"
                 - name: DB_USER
                   valueFrom:
                     secretKeyRef:

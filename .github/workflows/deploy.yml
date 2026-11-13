@@ -145,6 +145,8 @@ jobs:
 
       - name: kubectl apply (lo mismo que ./deploy.sh)
         run: |
+          # La configuración del entorno primero (k8s/config-<entorno>.env -> ConfigMap fx-rates-config), después el CronJob.
+          kubectl create configmap fx-rates-config -n "$NP_ENV" --from-env-file="k8s/config-$NP_ENV.env" --dry-run=client -o yaml | kubectl apply -n "$NP_ENV" -f -
           sed -e "s/IMAGE_TAG/$NP_TAG/" -e "s/ENV_PLACEHOLDER/$NP_ENV/" k8s/cronjob.yaml | kubectl apply -n "$NP_ENV" -f -
 
       # Una corrida con la imagen nueva, ya, en vez de esperar al próximo horario: nullplatform da el deploy por terminado
